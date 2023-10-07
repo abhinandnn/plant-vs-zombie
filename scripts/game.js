@@ -1,7 +1,7 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-let score = 100;
+let score = 50;
 let gameOver = false;
 let canPlant = false;
 
@@ -145,10 +145,14 @@ document.getElementById("peashooter").addEventListener("click", () => {
   canPlant = true;
 });
 
+
+function decreaseScore(qty) {
+    score -=qty;
+  }
+
 // Handle planting logic
 canvas.addEventListener("mousedown", (event) => {
-
-    if(!canPlant) return;
+  if (!canPlant) return;
 
   if (selectedPlant) {
     const coordinates = getMouseCoordinates(event);
@@ -172,16 +176,18 @@ canvas.addEventListener("mousedown", (event) => {
 
       // If there's no existing plant of the same type, create and add the selected plant
       if (!existingPlant) {
-        if (selectedPlant === "sunflower") {
+        if (selectedPlant === "sunflower"&&score >=50) {
           const sunflower = new Sunflower(boxX, boxY);
           plants.push(sunflower);
-        } else if (selectedPlant === "peashooter") {
-          const peashooter = new Peashooter(boxX, boxY);
-          plants.push(peashooter);
+          decreaseScore(50);
+        } else if (selectedPlant === "peashooter"&& score>=100) {
+            const peashooter = new Peashooter(boxX, boxY);
+            decreaseScore(100);
+            plants.push(peashooter);
         }
       }
 
-      canPlant=false;
+      canPlant = false;
     }
   }
 });
@@ -220,7 +226,7 @@ class Sun {
   collect() {
     if (!this.isCollected) {
       this.isCollected = true;
-      score += 50;
+      score += 25;
     }
   }
 }
@@ -276,6 +282,7 @@ class Sunflower {
       );
     }
   }
+
 }
 
 class Peashooter {
@@ -299,11 +306,11 @@ class Peashooter {
       );
     }
   }
+
+
 }
 
 const plants = []; // Array to store planted plants
-
-// ... Continue with your existing code ...
 
 // Modify your game loop
 function gameLoop() {
@@ -329,4 +336,27 @@ function gameLoop() {
   }
 }
 
-gameLoop();
+const restartButton = document.getElementById("restartButton");
+
+// Function to restart the game
+function restartGame() {
+  // Reset score and game over flag
+  score = 50;
+  gameOver = false;
+
+  // Remove existing zombies and suns
+  zombies_arr.length = 0;
+  suns_arr.length = 0;
+  plants.length =0;
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Restart the game loop
+  gameLoop();
+}
+
+restartButton.addEventListener("click", restartGame);
+
+
+restartGame();
+

@@ -25,6 +25,10 @@
         text-align: center;
         line-height: 80px;
         cursor: pointer;
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       canvas {
@@ -35,9 +39,11 @@
   <body>
     <div id="plantSelection">
       <div id="sunflower" class="plant">
-        <img src="">
-      </div>
-      <div id="peashooter" class="plant">Peashooter</div>
+        <img src="assets/img/sunflower.png" width="60">
+    </div>
+    <div id="peashooter" class="plant">
+        <img src="assets/img/peashooter.png" width="70">
+    </div>
     </div>
     <canvas id="myCanvas" width="1000" height="600"></canvas>
     <button id="restartButton">Restart Game</button>
