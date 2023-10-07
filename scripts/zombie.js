@@ -42,3 +42,15 @@ let MyCanvas = document.getElementById("myCanvas");
     }
   };
  }
+ 
+ const max_zombies=6;
+  const createRandomZombie=()=>{
+   if(zombies_arr.length<=max_zombies){
+    const maxX = canvas.width-5;
+    const maxY= canvas.height-5;
+    const randomY=Math.random()*maxY;
+     const zombie= new Zombies(maxX,randomY);
+     zombies_arr.push(zombie);
+
+   };
+  }
