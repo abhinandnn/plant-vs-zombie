@@ -119,73 +119,74 @@ const getMouseCoordinates = (event) => {
   
 
 // sun-------------------->
-
-class Sun {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.radius = 20;
-    this.value = 25;
-    this.isCollected = false;
-    this.fallSpeed = 1; // Speed at which the sun falls
-    this.image = new Image(400,400);
-    this.image.src = 'assets/img/sun.png';
-  }
-
-  draw() {
-    if (!this.isCollected) {
-      ctx.drawImage(this.image, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+ // Sun class
+ class Sun {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 40; // Increased sun size
+        this.value = 25;
+        this.isCollected = false;
+        this.fallSpeed = 2; // Increased falling speed
+        this.image = new Image();
+        this.image.src = 'assets/img/sun.png'; // Set the path to your sun image
     }
-  }
 
-  update() {
-    if (!this.isCollected) {
-      this.y += this.fallSpeed; // Update the sun's position to make it fall
+    draw() {
+        if (!this.isCollected) {
+            ctx.drawImage(this.image, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+        }
     }
-  }
 
-  collect() {
-    if (!this.isCollected) {
-      this.isCollected = true;
-      // Implement resource collection logic here (e.g., increment the player's resource count).
+    update() {
+        if (!this.isCollected) {
+            this.y += this.fallSpeed; // Update the sun's position to make it fall
+        }
     }
-  }
+
+    collect() {
+        if (!this.isCollected) {
+            this.isCollected = true;
+            // Implement resource collection logic here (e.g., increment the player's resource count).
+        }
+    }
 }
 
 const suns_arr = []; // Array to store Sun instances
-const max_suns = 10; // Maximum number of suns on the screen
+const max_suns = 5; // Maximum number of suns on the screen
 
 function createRandomSun() {
-  if (suns_arr.length < max_suns) {
-    const randomX = Math.random() * canvas.width;
-    const sun = new Sun(randomX, -50); // Start sun above the canvas
+    if (suns_arr.length < max_suns) {
+        const randomX = Math.random() * canvas.width;
+        const sun = new Sun(randomX, -100); // Start sun above the canvas
 
-    suns_arr.push(sun);
-  }
+        suns_arr.push(sun);
+    }
 }
 
-setInterval(createRandomSun, 5000); // Create a new sun every 5 seconds
+setInterval(createRandomSun, 8000); // Increased time duration for creating new suns
 
 function checkSunClick(event) {
-  const coordinates = getMouseCoordinates(event);
-  const x = coordinates.x;
-  const y = coordinates.y;
+    const coordinates = getMouseCoordinates(event);
+    const x = coordinates.x;
+    const y = coordinates.y;
 
-  for (const sun of suns_arr) {
-    const distance = Math.sqrt((x - sun.x) ** 2 + (y - sun.y) ** 2);
-    if (distance <= sun.radius && !sun.isCollected) {
-      sun.collect();
+    for (const sun of suns_arr) {
+        const distance = Math.sqrt((x - sun.x) ** 2 + (y - sun.y) ** 2);
+        if (distance <= sun.radius && !sun.isCollected) {
+            sun.collect();
+        }
     }
-  }
 }
 
 canvas.addEventListener('click', checkSunClick);
 
 function drawSuns() {
-  for (const sun of suns_arr) {
-    sun.draw();
-  }
+    for (const sun of suns_arr) {
+        sun.draw();
+    }
 }
+
 
 // Modify your game loop
 function gameLoop() {
