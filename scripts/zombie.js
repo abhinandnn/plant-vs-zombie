@@ -27,14 +27,15 @@ let MyCanvas = document.getElementById("myCanvas");
      this.x=x;
      this.y=y;
      this.health= 100;
-     this.width=30;
-     this.height=30;
-     this.color="yellow";
+     this.width=90;
+     this.height=90;
+    
      this.speed=1.5 ;
     }
      
     draw(ctx){
-     ctx.drawImage(zombieTexture,this.x,this.y,this.width,this.height);
+        ctx.fillstyle='yellow';
+     ctx.drawRect(this.x,this.y,this.width,this.height);
     }
     moveZombie(){
      this.x-=this.speed;
