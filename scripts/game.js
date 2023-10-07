@@ -232,7 +232,7 @@ const restartButton = document.getElementById("restartButton");
 // Function to restart the game
 function restartGame() {
   // Reset score and game over flag
-  score = 0;
+  score = 100;
   gameOver = false;
 
   // Remove existing zombies and suns
