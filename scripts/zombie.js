@@ -54,3 +54,18 @@ let MyCanvas = document.getElementById("myCanvas");
 
    };
   }
+  
+  const drawZombie=()=>{
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const element of zombies_arr){
+      element.moveZombie();
+      element.draw(ctx);
+    }
+   }
+   // creating a new zombie after 3 seconds
+   setInterval(createRandomZombie, 3000);
+   const gameLoop=()=>{
+    drawZombie();
+    requestAnimationFrame(gameLoop) ;   
+   }
+ gameLoop();
