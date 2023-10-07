@@ -1,8 +1,8 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+let score=100;
 const square_size = 100;
-const score=100;
 const rows = canvas.height / square_size;
 const columns = canvas.width / square_size;
 
@@ -170,7 +170,7 @@ function createRandomSun() {
     }
 }
 
-setInterval(createRandomSun, 8000); // Increased time duration for creating new suns
+setInterval(createRandomSun, 9000); // Increased time duration for creating new suns
 
 function checkSunClick(event) {
     const coordinates = getMouseCoordinates(event);
