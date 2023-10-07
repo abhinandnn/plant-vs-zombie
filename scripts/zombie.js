@@ -17,7 +17,7 @@ let MyCanvas = document.getElementById("myCanvas");
   
   //creating zombie class
   
- const ctx=canvas.getContext("2d");
+ const context=canvas.getContext("2d");
  const zombies_arr=[];
  const zombieTexture=new Image();
  zombieTexture.src="./zombie.png";
@@ -33,9 +33,9 @@ let MyCanvas = document.getElementById("myCanvas");
      this.speed=1.5 ;
     }
      
-    draw(ctx){
-        ctx.fillstyle='yellow';
-     ctx.drawRect(this.x,this.y,this.width,this.height);
+    draw(context){
+        context.fillstyle='yellow';
+     context.drawRect(this.x,this.y,this.width,this.height);
     }
     moveZombie(){
      this.x-=this.speed;
@@ -54,9 +54,9 @@ let MyCanvas = document.getElementById("myCanvas");
 
    };
   }
-  
+
   const drawZombie=()=>{
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    context.clearRect(0,0,canvas.width,canvas.height);
     for(const element of zombies_arr){
       element.moveZombie();
       element.draw(ctx);
