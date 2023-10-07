@@ -3,8 +3,7 @@ const ctx = canvas.getContext("2d");
 
 let score = 100;
 let gameOver = false;
-let canPlant = true; 
-
+let canPlant = false;
 
 const square_size = 100;
 const rows = canvas.height / square_size;
@@ -137,51 +136,55 @@ function selectPlant(plantType) {
   selectedPlant = plantType;
 }
 
-document.getElementById("sunflower").addEventListener("click", () => selectPlant("sunflower"));
-document.getElementById("peashooter").addEventListener("click", () => selectPlant("peashooter"));
-
-
+document.getElementById("sunflower").addEventListener("click", () => {
+  selectPlant("sunflower");
+  canPlant = true;
+});
+document.getElementById("peashooter").addEventListener("click", () => {
+  selectPlant("peashooter");
+  canPlant = true;
+});
 
 // Handle planting logic
 canvas.addEventListener("mousedown", (event) => {
-    if (selectedPlant) {
-      const coordinates = getMouseCoordinates(event);
-      const x = coordinates.x;
-      const y = coordinates.y;
-  
-      // Calculate the center position of the box based on the click coordinates
-      const boxX = Math.floor(x / square_size) * square_size + square_size / 2;
-      const boxY = Math.floor(y / square_size) * square_size + square_size / 2;
-  
-      // Check if the planting location is valid (e.g., not on the top control panel)
-      if (boxY >= ctrl_pnl.h) {
-        // Check if there's already a plant of the same type at this location
-        const existingPlant = plants.find((plant) => {
-          return (
-            Math.abs(plant.x - boxX) < square_size / 2 &&
-            Math.abs(plant.y - boxY) < square_size / 2 &&
-            plant.constructor.name === selectedPlant // Check if it's the same type
-          );
-        });
-  
-        // If there's no existing plant of the same type, create and add the selected plant
-        if (!existingPlant) {
-          if (selectedPlant === "sunflower") {
-            const sunflower = new Sunflower(boxX, boxY);
-            plants.push(sunflower);
-          } else if (selectedPlant === "peashooter") {
-            const peashooter = new Peashooter(boxX, boxY);
-            plants.push(peashooter);
-          }
+
+    if(!canPlant) return;
+
+  if (selectedPlant) {
+    const coordinates = getMouseCoordinates(event);
+    const x = coordinates.x;
+    const y = coordinates.y;
+
+    // Calculate the center position of the box based on the click coordinates
+    const boxX = Math.floor(x / square_size) * square_size + square_size / 2;
+    const boxY = Math.floor(y / square_size) * square_size + square_size / 2;
+
+    // Check if the planting location is valid (e.g., not on the top control panel)
+    if (boxY >= ctrl_pnl.h) {
+      // Check if there's already a plant of the same type at this location
+      const existingPlant = plants.find((plant) => {
+        return (
+          Math.abs(plant.x - boxX) < square_size / 2 &&
+          Math.abs(plant.y - boxY) < square_size / 2 &&
+          plant.constructor.name === selectedPlant // Check if it's the same type
+        );
+      });
+
+      // If there's no existing plant of the same type, create and add the selected plant
+      if (!existingPlant) {
+        if (selectedPlant === "sunflower") {
+          const sunflower = new Sunflower(boxX, boxY);
+          plants.push(sunflower);
+        } else if (selectedPlant === "peashooter") {
+          const peashooter = new Peashooter(boxX, boxY);
+          plants.push(peashooter);
         }
       }
-    }
-  });
-  
 
-  
-  
-  
+      canPlant=false;
+    }
+  }
+});
 
 // Sun class
 class Sun {
