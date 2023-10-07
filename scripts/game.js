@@ -2,6 +2,7 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
 const square_size = 100;
+const score=100;
 const rows = canvas.height / square_size;
 const columns = canvas.width / square_size;
 
@@ -118,7 +119,12 @@ const getMouseCoordinates = (event) => {
   };
   
 
-// sun-------------------->
+  function updateScore() {
+    ctx.fillStyle = 'black';
+    ctx.font = '24px Arial';
+    ctx.fillText(`Score: ${score}`, 10, 30);
+  }
+
  // Sun class
  class Sun {
     constructor(x, y) {
@@ -147,7 +153,7 @@ const getMouseCoordinates = (event) => {
     collect() {
         if (!this.isCollected) {
             this.isCollected = true;
-            // Implement resource collection logic here (e.g., increment the player's resource count).
+            score+=50;
         }
     }
 }
@@ -194,6 +200,7 @@ function gameLoop() {
   updateGame();
   drawGrid();
   drawZombie();
+  updateScore();
   for (const sun of suns_arr) {
     sun.update();
     sun.draw();
