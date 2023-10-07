@@ -15,4 +15,29 @@ let MyCanvas = document.getElementById("myCanvas");
     console.log(`mouse coordinates: x=${x},y=${y}`);
   })
   
+  //creating zombie class
   
+ const ctx=canvas.getContext("2d");
+ const zombies_arr=[];
+ const zombieTexture=new Image();
+ zombieTexture.src="./zombie.png";
+ zombieTexture.onload=()=>{
+  class Zombies {
+    constructor(x,y,health){
+     this.x=x;
+     this.y=y;
+     this.health= 100;
+     this.width=30;
+     this.height=30;
+     this.color="yellow";
+     this.speed=1.5 ;
+    }
+     
+    draw(ctx){
+     ctx.drawImage(zombieTexture,this.x,this.y,this.width,this.height);
+    }
+    moveZombie(){
+     this.x-=this.speed;
+    }
+  };
+ }
