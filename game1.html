@@ -1,21 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plant vs Zombies</title>
     <style>
-        #myCanvas {
-            display: block;
-            margin: 0 auto;
-            border: 1px solid black;
-        }
+      #myCanvas {
+        display: block;
+        margin: 0 auto;
+        border: 1px solid black;
+      }
+      #plantSelection {
+        display: flex;
+        justify-content: space-around;
+        background-color: #ccc;
+        padding: 10px;
+      }
+
+      .plant {
+        width: 80px;
+        height: 80px;
+        background-color: lightgreen;
+        border: 2px solid darkgreen;
+        text-align: center;
+        line-height: 80px;
+        cursor: grab;
+      }
+
+      canvas {
+        border: 2px solid black;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="plantSelection">
+      <div id="sunflower" class="plant">Sunflower</div>
+      <div id="peashooter" class="plant">Peashooter</div>
+    </div>
     <canvas id="myCanvas" width="1000" height="600"></canvas>
     <button id="restartButton">Restart Game</button>
 
     <script src="/scripts/game.js"></script>
-</body>
+  </body>
 </html>

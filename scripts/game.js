@@ -3,6 +3,8 @@ const ctx = canvas.getContext("2d");
 
 let score = 100;
 let gameOver = false;
+let canPlant = true; 
+
 
 const square_size = 100;
 const rows = canvas.height / square_size;
@@ -74,7 +76,7 @@ class Zombie {
     this.health = 100;
     this.width = 90;
     this.height = 90;
-    this.speed = .5;
+    this.speed = 0.5;
     this.movement = this.speed;
     this.curr_health = this.health;
     this.image = new Image(this.width, this.height);
@@ -127,6 +129,59 @@ function updateScore() {
   ctx.font = "24px Arial";
   ctx.fillText(`Score: ${score}`, 10, 30);
 }
+
+// Plant selection and planting logic
+let selectedPlant = null;
+
+function selectPlant(plantType) {
+  selectedPlant = plantType;
+}
+
+document.getElementById("sunflower").addEventListener("click", () => selectPlant("sunflower"));
+document.getElementById("peashooter").addEventListener("click", () => selectPlant("peashooter"));
+
+
+
+// Handle planting logic
+canvas.addEventListener("mousedown", (event) => {
+    if (selectedPlant) {
+      const coordinates = getMouseCoordinates(event);
+      const x = coordinates.x;
+      const y = coordinates.y;
+  
+      // Calculate the center position of the box based on the click coordinates
+      const boxX = Math.floor(x / square_size) * square_size + square_size / 2;
+      const boxY = Math.floor(y / square_size) * square_size + square_size / 2;
+  
+      // Check if the planting location is valid (e.g., not on the top control panel)
+      if (boxY >= ctrl_pnl.h) {
+        // Check if there's already a plant of the same type at this location
+        const existingPlant = plants.find((plant) => {
+          return (
+            Math.abs(plant.x - boxX) < square_size / 2 &&
+            Math.abs(plant.y - boxY) < square_size / 2 &&
+            plant.constructor.name === selectedPlant // Check if it's the same type
+          );
+        });
+  
+        // If there's no existing plant of the same type, create and add the selected plant
+        if (!existingPlant) {
+          if (selectedPlant === "sunflower") {
+            const sunflower = new Sunflower(boxX, boxY);
+            plants.push(sunflower);
+          } else if (selectedPlant === "peashooter") {
+            const peashooter = new Peashooter(boxX, boxY);
+            plants.push(peashooter);
+          }
+        }
+      }
+    }
+  });
+  
+
+  
+  
+  
 
 // Sun class
 class Sun {
@@ -196,11 +251,56 @@ function checkSunClick(event) {
 
 canvas.addEventListener("click", checkSunClick);
 
-function drawSuns() {
-  for (const sun of suns_arr) {
-    sun.draw();
+// Plant classes (Sunflower and Peashooter)
+class Sunflower {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.radius = 40; // Adjust size as needed
+    this.planted = true; // Indicate that it's planted
+    this.image = new Image();
+    this.image.src = "assets/img/sunflower.png"; // Set the path to your sunflower image
+  }
+
+  draw() {
+    if (this.planted) {
+      ctx.drawImage(
+        this.image,
+        this.x - this.radius,
+        this.y - this.radius,
+        this.radius * 2,
+        this.radius * 2
+      );
+    }
   }
 }
+
+class Peashooter {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.radius = 40; // Adjust size as needed
+    this.planted = true; // Indicate that it's planted
+    this.image = new Image();
+    this.image.src = "assets/img/peashooter.png"; // Set the path to your peashooter image
+  }
+
+  draw() {
+    if (this.planted) {
+      ctx.drawImage(
+        this.image,
+        this.x - this.radius,
+        this.y - this.radius,
+        this.radius * 2,
+        this.radius * 2
+      );
+    }
+  }
+}
+
+const plants = []; // Array to store planted plants
+
+// ... Continue with your existing code ...
 
 // Modify your game loop
 function gameLoop() {
@@ -213,41 +313,17 @@ function gameLoop() {
     sun.update();
     sun.draw();
   }
-
+  for (const plant of plants) {
+    plant.draw();
+  }
   if (gameOver) {
     // Display game over message
     ctx.fillStyle = "red";
     ctx.font = "48px Arial";
     ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
-    return;
+  } else {
+    requestAnimationFrame(gameLoop);
   }
-
-  requestAnimationFrame(gameLoop);
 }
 
-
-// Define the restart button element
-const restartButton = document.getElementById("restartButton");
-
-// Function to restart the game
-function restartGame() {
-  // Reset score and game over flag
-  score = 100;
-  gameOver = false;
-
-  // Remove existing zombies and suns
-  zombies_arr.length = 0;
-  suns_arr.length = 0;
-
-  // Clear the canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Restart the game loop
-  gameLoop();
-}
-
-// Add a click event listener to the restart button
-restartButton.addEventListener("click", restartGame);
-
-// Call restartGame to initialize the button and start the game
-restartGame();
+gameLoop();
