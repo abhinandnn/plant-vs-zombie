@@ -298,11 +298,83 @@ function sune(){
         }
     }
 }
-class zombies{
+
+// zombies
+// Cordinates detection
+
+const getMouseCoordinates = (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  return { x, y };
+};
+
+canvas.addEventListener("mousemove", (event) => {
+  const coordinates = getMouseCoordinates(event);
+  const x = coordinates.x;
+  const y = coordinates.y;
+  console.log(`mouse coordinates: x=${x},y=${y}`);
+});
+
+// Creating the Zombie class
+
+class Zombie {
+  constructor(y) {
+    this.x = canvas.width;
+    this.y = y;
+    this.health = 100;
+    this.width = 90;
+    this.height = 90;
+    this.speed = 0.5;
 
     
+    this.image = new Image(this.width, this.height);
+    this.image.src = "assets/img/zombie.png";
+    console.log(`zombie created at y=${y}`);
+    this.image.onload = () => {
+      this.draw();
+    }
+  }
 
+  draw() {
+    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+  }
+
+  moveZombie() {
+    this.x -= this.speed;
+
+    if (this.x < 0) {
+      gameOver = true;
+    }
+  }
 }
+
+const zombies_arr = [];
+
+const max_zombies = 6;
+
+const createRandomZombie = () => {
+  if (zombies_arr.length < max_zombies) {
+    const maxY = canvas.height;
+    const randomY = Math.floor(Math.random() * 5 + 1) * 100;
+    const zombie = new Zombie(randomY);
+
+    zombies_arr.push(zombie);
+  }
+};
+
+setInterval(createRandomZombie, 3000);
+
+const drawZombie = () => {
+  //  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const element of zombies_arr) {
+    element.moveZombie();
+    element.draw();
+  }
+};
+
+
+
 function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle='brown';
