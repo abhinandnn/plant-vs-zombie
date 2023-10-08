@@ -70,7 +70,7 @@ for(let i=0;i<l;i++)
 }
 let selectedPlantType=undefined;
 let tsun=1200;
-let suns=[];
+const suns=[];
 const sunflowerCost=50;
 const peashooterCost=100;
 const chomperCost=100;
@@ -110,14 +110,23 @@ class sun{
         this.y=y;
         this.side=60;
         this.power=25;
+        this.picked=false;
+        this.lastPickedTime = 0;
     }
     draw()
     {
-        const img=new Image();
+        if(!this.picked)
+        { const img=new Image();
         img.src='/plants/sun.png';
-        ctx.drawImage(img,this.x,this.y,50,50);
+        ctx.drawImage(img,this.x,this.y,this.side,this.side);}
     }
+    isClicked(dx,dy) {
+        return !this.picked && dx >= this.x && dx <= this.x + this.side && dy >= this.y && dy <= this.y + this.side;
 }
+pick()
+{
+    this.picked=true;
+}}
 class sunflower{
     constructor(x,y){
         this.type="sunflower"
@@ -126,7 +135,7 @@ class sunflower{
         this.side=square_size;
         this.health=75;
         this.cost=50;
-        this.lastsun=0
+        this.lastsun=0;
     }
     draw()
     {
@@ -137,9 +146,10 @@ drawimg('SunFlower/5',60,this.x+2,this.y+8,this.frame)
     bringPease()
 {
     const currentTime=Date.now();
-        if(currentTime-this.lastsun>=5000)
+        if(currentTime-this.lastsun>=10000)
         {
-            sun.push(new sun(this.x+20,this.y+12));
+            suns.push(new sun(this.x+20,this.y+12));
+            suns[suns.length - 1].lastPickedTime = Date.now();
             this.lastsun=currentTime;
         }
     }
@@ -237,8 +247,8 @@ function managePlants(){
     for(let i=0;i<plants.length;i++)
     {
         plants[i].draw();
-        if(plants[i].type==="peashooter")
-        {plants[i].bringPease();}
+        // if(plants[i].type==="peashooter")
+        plants[i].bringPease();
     }
 }
 class pea{
@@ -274,7 +284,20 @@ i--;
 }
 }
 }
-
+function sune(){
+    for(let i=0;i<suns.length;i++)
+{
+    suns[i].draw();
+    if (suns[i].isClicked(pointer.x, pointer.y)) {
+            suns[i].pick();
+            tsun += suns[i].power;
+        }
+        if (suns[i].picked && Date.now() - suns[i].lastPickedTime >= 10000) {
+            suns.splice(i, 1);
+            i--;
+        }
+    }
+}
 class zombies{
 
 }
@@ -286,6 +309,7 @@ function updateGame(){
     drawGrid();
     managePlants();
     pease();
+    sune();
     requestAnimationFrame(updateGame);
 }
 updateGame();
