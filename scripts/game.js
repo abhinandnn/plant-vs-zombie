@@ -18,11 +18,11 @@ class Square {
     constructor(x, y, size) {
         this.x = x;
         this.y = y;
-        this.size = size;
+        this.side = size;
     }
     draw() {
         ctx.strokeStyle = 'black';
-        ctx.strokeRect(this.x, this.y, this.size, this.size);
+        ctx.strokeRect(this.x, this.y, this.side, this.side);
     }
 }
 const ctrl_pnl = {
@@ -79,19 +79,23 @@ const wallnutCost=50;
 let plantCost=peashooterCost;
 const plants=[];
 const plantmenu=[
-    {plantname:"peashooter",imgg:"/plants/peash.png"},
-    {plantname:"sunflower",imgg:"/plants/sunf.png"},
-    {plantname:"wallnut",imgg:"/plants/wall.png"}
+    {plantname:"peashooter",imgg:"/plants/peash.png",cost:100},
+    {plantname:"sunflower",imgg:"/plants/sunf.png",cost:75},
+    {plantname:"wallnut",imgg:"/plants/wall.png",cost:50}
 ]
 function drawPlantmenu(){
     let x=20;
     for(let i=0;i<plantmenu.length;i++)
         {
-    const img = new Image();
-    
+        const img = new Image();
         img.src = plantmenu[i].imgg;
         ctx.drawImage(img, x, 20, 100, 60);
-        x=x+120;}}
+        ctx.fillStyle='yellow';
+        ctx.font='18px Arial';
+        ctx.fillText(plantmenu[i].cost,x+60,60);
+        x=x+120;
+    }
+    }
     canvas.addEventListener('click',function(event) {
         pointer.x=event.x-canvas.offsetLeft;
         pointer.y=event.y-canvas.offsetTop;
@@ -99,7 +103,8 @@ function drawPlantmenu(){
         for(let i=0;i<plantmenu.length;i++)
         {
         if(pointer.x>=x&&pointer.x<=x+100&&pointer.y>=20&&pointer.y<=80)
-        {selectedPlantType=plantmenu[i].plantname;}
+        {selectedPlantType=plantmenu[i].plantname;
+        }
         x=x+120;
         }
 })
@@ -158,14 +163,17 @@ class sunflower{
         {
             this.frame=(this.frame+1)%13;
         }
-drawimg('/plants/SunFlower/5',13,this.x+2,this.y+8,this.frame);
+drawimg('/plants/SunFlower/5',13,this.x+20,this.y+18,this.frame);
+    ctx.strokeStyle = 'black';
+    ctx.strokeRect(this.x, this.y, this.side, this.side);
+
     }
     bringPease()
 {
     const currentTime=Date.now();
         if(currentTime-this.lastsun>=10000)
         {
-            suns.push(new sun(this.x+20,this.y+12));
+            suns.push(new sun(this.x+38,this.y+20));
             suns[suns.length - 1].lastPickedTime = Date.now();
             this.lastsun=currentTime;
         }
@@ -195,18 +203,18 @@ class peashooter {
     }
 draw()
 {
-if(fr%4==0)
+if(fr%3==0)
 {
     this.frame=(this.frame+1)%12;
 }
-drawimg('/plants/Peashooter/4',12,this.x+2,this.y+8,this.frame);
+drawimg('/plants/Peashooter/4',12,this.x+20,this.y+20,this.frame);
 }
 bringPease()
 {
     const currentTime=Date.now();
         if(currentTime-this.lastPea>=2000)
         {
-            peas.push(new pea(this.x+20,this.y+12));
+            peas.push(new pea(this.x+38,this.y+22));
             this.lastPea=currentTime;
         }
     }
@@ -244,6 +252,20 @@ function managePlants(){
     {
         plants[i].draw();
         plants[i].bringPease();
+        for(let j=0;j<zombies.length;j++)
+        {
+            if(collision(plants[i],zombies[j]))
+            {
+                zombies[j].motion=0;
+                zombies[j].attack=true;
+                plants[i].health=plants[i].health-0.2;
+            }
+            if(plants[i]&&plants[i].health<=0)
+            { plants.splice(i,1);
+            i--; 
+            zombies[j].attack=false;
+            zombies[j].motion=zombies[j].speed;}
+        }
     }
 }
 class pea{
@@ -263,7 +285,7 @@ class pea{
     draw(){
         const img=new Image();
         img.src='/plants/pea1.png';
-        ctx.drawImage(img,this.x,this.y,);
+        ctx.drawImage(img,this.x,this.y);
     }
 
 }
@@ -287,7 +309,7 @@ function sune(){
             suns[i].pick();
             tsun += suns[i].power;
         }
-        if (suns[i].picked || Date.now() - suns[i].lastPickedTime >= 10000) {
+        if (suns[i].picked || Date.now() - suns[i].lastPickedTime >= 5000) {
             suns.splice(i, 1);
             i--;
         }
@@ -300,19 +322,34 @@ class zombie{
         this.y=y;
         this.side=square_size;
         this.speed=Math.random()*0.3+0.3;
+        this.motion=this.speed;
         this.health=100;
         this.frame=0;
+        this.attack=false;
     }
 move(){
-    this.x=this.x-this.speed;
+    this.x=this.x-this.motion;
 }
 draw(){
+    if(this.attack)
+    {
+        if(fr%3===0)
+        {
+            this.frame=(this.frame+1)%21;
+        }
+drawimg('/zombies/attack/1',21,this.x-90,this.y-40,this.frame);
+    ctx.strokeStyle = 'black';
+    ctx.strokeRect(this.x, this.y, this.side, this.side);
+    }
+    else{
     if(fr%3===0)
         {
             this.frame=(this.frame+1)%21;
         }
-drawimg('/zombies/walk/1',21,this.x,this.y-40,this.frame);
-    }
+drawimg('/zombies/walk/1',21,this.x-90,this.y-40,this.frame);
+    ctx.strokeStyle = 'black';
+    ctx.strokeRect(this.x, this.y, this.side, this.side);
+    }}
 }
 
 function zombiese(){
@@ -320,6 +357,10 @@ function zombiese(){
     {
         zombies[i].move();
         zombies[i].draw();
+        if(zombies[i].x<0)
+        {
+            gameover=true;
+        }
     }
     if(fr%zombietime===0)
     {
@@ -351,14 +392,18 @@ function controlGame()
     ctx.fillStyle='yellow';
     ctx.font='30px Arial';
     ctx.fillText('Sun: '+tsun,canvas.width-230,60);
+    if(gameover){
+        ctx.fillStyle='black'
+        ctx.font='60px Arial';
+        ctx.fillText('Game Over!', 300,330);
+    }
 }
 function collision(a,b){
-    return !(a.x>b.x+b.width||a.x+a.width<b.x||a.y>b.y+b.height||a.y+a.height<b.y);}
+    return !(a.x>b.x+b.side||a.x+a.side<b.x||a.y>b.y+b.side||a.y+a.side<b.y);}
 function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle='brown';
     ctx.fillRect(0,0,ctrl_pnl.w,ctrl_pnl.h);
-    controlGame();
     drawPlantmenu();
     drawGrid();
     managePlants();
@@ -367,6 +412,8 @@ function updateGame(){
     sunese();
     zombiese();
     fr++;
+    controlGame();
+    if(!gameover)
     requestAnimationFrame(updateGame);
 }
 requestAnimationFrame(updateGame);
