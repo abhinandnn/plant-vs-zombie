@@ -34,8 +34,7 @@ for (let i = 1; i < rows; i++) {
     }
 }
 function mouseinsqr(mouseX, mouseY, squareX, squareY, squareSize) {
-    return mouseX >= squareX && mouseX <= squareX + squareSize &&
-        mouseY >= squareY && mouseY <= squareY + squareSize;
+    return mouseX >= squareX&&mouseX<=squareX + squareSize && mouseY >= squareY &&mouseY <= squareY + squareSize;
 }
 function drawGrid() {
     for (let i = 1; i < rows; i++) {
@@ -53,32 +52,72 @@ canvas.addEventListener('mouseleave',function(event) {
     pointer.x=0;
     pointer.y=0;
 })
-
-// function drawimg(x,l,dx,dy)
-// {
-// let images=[];
-// images.length=l;
-// for(let i=0;i<l;i++)
-// {
-//     images[i]=new Image();
-//     images[i].src= '/plants/Chomper/' + x +' (' + (i+1).toString()+').png'
-// }
+let i=0;
+function drawimg(x,l,dx,dy,frame)
+{
+let images=[];
+images.length=l;
+for(let i=0;i<l;i++)
+{
+    images[i]=new Image();
+    images[i].src= '/plants/' + x +' (' + (i+1).toString()+').png';
+}
 // let i=0;
-// setInterval(function(){
-//     ctx.clearRect(100,100,100,100);
-//     if(i>=l-1)
-//     { i=0;}
-//     i++;
-//     ctx.drawImage(images[i],100,100);
-// },16)}
-let selectedPlantType="peashooter";
-let tsun=300;
+    // if(i>=l-1)
+    // { i=0;}
+    // i++;
+    ctx.drawImage(images[frame],dx,dy);
+}
+let selectedPlantType=undefined;
+let tsun=1200;
+let suns=[];
 const sunflowerCost=50;
 const peashooterCost=100;
 const chomperCost=100;
 const wallnutCost=50;
 let plantCost=peashooterCost;
 const plants=[];
+const plantmenu=[
+    {plantname:"peashooter",imgg:"/plants/peash.png"},
+    {plantname:"sunflower",imgg:"/plants/sunf.png"}
+    // {plantname:"sunflower",imgg:"/plants/sunf.png"},
+    // {plantname:"sunflower",imgg:"/plants/sunf.png"}
+]
+function drawPlantmenu(){
+    let x=20;
+    for(let i=0;i<plantmenu.length;i++)
+        {
+    const img = new Image();
+    
+        img.src = plantmenu[i].imgg;
+        ctx.drawImage(img, x, 20, 100, 60);
+        x=x+120;}}
+    canvas.addEventListener('click',function(event) {
+        pointer.x=event.x-canvas.offsetLeft;
+        pointer.y=event.y-canvas.offsetTop;
+        let x=20
+        for(let i=0;i<plantmenu.length;i++)
+        {
+        if(pointer.x>=x&&pointer.x<=x+100&&pointer.y>=20&&pointer.y<=80)
+        {selectedPlantType=plantmenu[i].plantname;}
+        x=x+120;
+        }
+})
+class sun{
+    constructor(x,y)
+    {
+        this.x=x;
+        this.y=y;
+        this.side=60;
+        this.power=25;
+    }
+    draw()
+    {
+        const img=new Image();
+        img.src='/plants/sun.png';
+        ctx.drawImage(img,this.x,this.y,50,50);
+    }
+}
 class sunflower{
     constructor(x,y){
         this.type="sunflower"
@@ -87,10 +126,22 @@ class sunflower{
         this.side=square_size;
         this.health=75;
         this.cost=50;
+        this.lastsun=0
     }
     draw()
     {
-
+    const frameSpeed = 0.1;
+this.frame = Math.floor((Date.now() * frameSpeed) % 60);
+drawimg('SunFlower/5',60,this.x+2,this.y+8,this.frame)
+    }
+    bringPease()
+{
+    const currentTime=Date.now();
+        if(currentTime-this.lastsun>=5000)
+        {
+            sun.push(new sun(this.x+20,this.y+12));
+            this.lastsun=currentTime;
+        }
     }
 } 
 class wallnut{
@@ -113,18 +164,22 @@ class peashooter {
         this.health=100;
         this.enemyDetect=false;
         this.lastPea = 0;
+        this.frame=0;
     }
 draw()
 {
-ctx.fillStyle='green';
-ctx.fillRect(this.x,this.y,this.side,this.side)
+// ctx.fillStyle='green';
+// ctx.fillRect(this.x,this.y,this.side,this.side)
+const frameSpeed = 0.1;
+this.frame = Math.floor((Date.now() * frameSpeed) % 60);
+drawimg('Peashooter/4',60,this.x+2,this.y+8,this.frame)
 }
 bringPease()
 {
     const currentTime=Date.now();
-        if(currentTime-this.lastPea>=1000)
+        if(currentTime-this.lastPea>=1500)
         {
-            peas.push(new pea(this.x+60,this.y+40));
+            peas.push(new pea(this.x+20,this.y+12));
             this.lastPea=currentTime;
         }
     }
@@ -182,7 +237,8 @@ function managePlants(){
     for(let i=0;i<plants.length;i++)
     {
         plants[i].draw();
-        plants[i].bringPease();
+        if(plants[i].type==="peashooter")
+        {plants[i].bringPease();}
     }
 }
 class pea{
@@ -202,7 +258,7 @@ class pea{
     draw(){
         const img=new Image();
         img.src='/plants/pea1.png';
-        ctx.drawImage(img,this.x,this.y);
+        ctx.drawImage(img,this.x,this.y,);
     }
 
 }
@@ -216,16 +272,20 @@ if(peas[i]&&peas[i].x>canvas.width)
 peas.splice(i,1);
 i--;
 }
-console.log('p '+peas.length);
 }
+}
+
+class zombies{
+
 }
 function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='grey';
+    ctx.fillStyle='brown';
     ctx.fillRect(0,0,ctrl_pnl.w,ctrl_pnl.h);
+    drawPlantmenu();
     drawGrid();
     managePlants();
     pease();
-    setTimeout(updateGame,16);
+    requestAnimationFrame(updateGame);
 }
 updateGame();
