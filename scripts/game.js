@@ -11,7 +11,7 @@ const pointer ={
 const peas = [];
 const zombies=[];
 let fr=0;
-let zombietime=1000;
+let zombietime=1200;
 
 class Square {
     constructor(x, y, size) {
@@ -74,6 +74,7 @@ for(let i=0;i<l;i++)
 let selectedPlantType=undefined;
 let tsun=1200;
 const suns=[];
+const rsuns=[];
 const sunflowerCost=50;
 const peashooterCost=100;
 const chomperCost=100;
@@ -112,9 +113,12 @@ class sun{
         this.x=x;
         this.y=y;
         this.side=60;
-        this.power=25;
+        this.power=10;
         this.picked=false;
         this.lastPickedTime = 0;
+        this.ry=60;
+        this.speed=2;
+        this.rx=Math.random()*10*this.side;
     }
     draw()
     {
@@ -129,6 +133,17 @@ class sun{
 pick()
 {
     this.picked=true;
+}
+randomdraw()
+    {
+        if(!this.picked)
+        { const img=new Image();
+        img.src='/plants/sun.png';
+        ctx.drawImage(img,this.rx,this.ry,this.side,this.side);}
+    }
+move()
+{
+this.ry=this.ry+this.speed;
 }}
 class sunflower{
     constructor(x,y){
@@ -274,7 +289,7 @@ function sune(){
             suns[i].pick();
             tsun += suns[i].power;
         }
-        if (suns[i].picked && Date.now() - suns[i].lastPickedTime >= 10000) {
+        if (suns[i].picked || Date.now() - suns[i].lastPickedTime >= 10000) {
             suns.splice(i, 1);
             i--;
         }
@@ -312,17 +327,42 @@ function zombiese(){
         {zombietime=zombietime-50;}
     }
 }
+function sunese(){
+    for(let i=0;i<rsuns.length;i++)
+    {
+        rsuns[i].move();
+        rsuns[i].randomdraw();
+        if (!rsuns[i].picked&&mouseinsqr(pointer.x, pointer.y,rsuns[i].rx,rsuns[i].ry,60)) {
+            rsuns[i].pick();
+            tsun += rsuns[i].power;
+            rsuns.splice(i,1);
+            i--;
+        }
+    }
+    if(fr%500===0)
+    {
+        rsuns.push(new sun(undefined,undefined));
+    }
+}
+function controlGame()
+{
+    ctx.fillStyle='yellow';
+    ctx.font='30px Arial';
+    ctx.fillText('Sun: '+tsun,canvas.width-230,60);
+}
 function collision(a,b){
     return !(a.x>b.x+b.width||a.x+a.width<b.x||a.y>b.y+b.height||a.y+a.height<b.y);}
 function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle='brown';
     ctx.fillRect(0,0,ctrl_pnl.w,ctrl_pnl.h);
+    controlGame();
     drawPlantmenu();
     drawGrid();
     managePlants();
     pease();
     sune();
+    sunese();
     zombiese();
     fr++;
     requestAnimationFrame(updateGame);
