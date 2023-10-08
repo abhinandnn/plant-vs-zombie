@@ -129,65 +129,8 @@ function updateScore() {
   ctx.fillText(`Score: ${score}`, 10, 30);
 }
 
-// Plant selection and planting logic
-let selectedPlant = null;
 
-function selectPlant(plantType) {
-  selectedPlant = plantType;
-}
-
-document.getElementById("sunflower").addEventListener("click", () => {
-  selectPlant("sunflower");
-  canPlant = true;
-});
-document.getElementById("peashooter").addEventListener("click", () => {
-  selectPlant("peashooter");
-  canPlant = true;
-});
-
-// Handle planting logic
-canvas.addEventListener("mousedown", (event) => {
-  if (!canPlant) return;
-
-  if (selectedPlant) {
-    const coordinates = getMouseCoordinates(event);
-    const x = coordinates.x;
-    const y = coordinates.y;
-
-    // Calculate the center position of the box based on the click coordinates
-    const boxX = Math.floor(x / square_size) * square_size + square_size / 2;
-    const boxY = Math.floor(y / square_size) * square_size + square_size / 2;
-
-    // Checking if the planting location is valid 
-    if (boxY >= ctrl_pnl.h) {
-      // Checking if there's already a plant of the same type at this location
-      const existingPlant = plants.find((plant) => {
-        return (
-          Math.abs(plant.x - boxX) < square_size / 2 &&
-          Math.abs(plant.y - boxY) < square_size / 2 &&
-          plant.constructor.name === selectedPlant // Check if it's the same type
-        );
-      });
-
-      // If there's no existing plant of the same type, create and add the selected plant
-      if (!existingPlant) {
-        if (selectedPlant === "sunflower" && score >= 50) {
-          const sunflower = new Sunflower(boxX, boxY);
-          plants.push(sunflower);
-          decreaseScore(50);
-        } else if (selectedPlant === "peashooter" && score >= -100) {
-          const peashooter = new Peashooter(boxX, boxY);
-          decreaseScore(100);
-          plants.push(peashooter);
-        }
-      }
-
-      canPlant = false;
-    }
-  }
-});
-
-// Sun class
+// Sun class// renerating random suns
 class Sun {
   constructor(x, y) {
     this.x = x;
@@ -279,81 +222,8 @@ class Sunflower {
   }
 }
 
-class Peashooter {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.radius = 40; // Adjust size as needed
-    this.planted = true; // Indicate that it's planted
-    this.image = new Image();
-    this.image.src = "assets/img/peashooter.png"; // Set the path to your peashooter image
-    this.peas = [];
-    this.peaSpeed = 2;
-    this.peaInterval = 2500; // Time interval between pea throws in milliseconds
-    this.lastPeaTime = Date.now();
-  }
 
-  draw() {
-    if (this.planted) {
-      ctx.drawImage(
-        this.image,
-        this.x - this.radius,
-        this.y - this.radius,
-        this.radius * 2,
-        this.radius * 2
-      );
-      for (const pea of this.peas) {
-        pea.draw();
-      }
-    }
-  }
 
-  throwPea() {
-    const currentTime = Date.now();
-    if (currentTime - this.lastPeaTime >= this.peaInterval) {
-      const peaXSpeed = this.peaSpeed; // Speed in the x-direction
-      const peaY = this.y; // Fixed y-coordinate for peas
-
-      const pea = new Pea(this.x, peaY, this.radius, peaXSpeed);
-      this.peas.push(pea);
-      this.lastPeaTime = currentTime;
-    }
-  }
-}
-
-class Pea {
-  constructor(x, y, radius, xSpeed) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius / 4;
-    this.xSpeed = xSpeed;
-    this.image = new Image();
-    this.image.src = "assets/img/pea.png"; // Set the path to your pea image
-  }
-
-  draw() {
-    ctx.fillStyle = "green";
-    ctx.drawImage(
-      this.image,
-      this.x - this.radius + 22,
-      this.y - this.radius - 13,
-      this.radius * 2,
-      this.radius * 2
-    );
-  }
-
-  move() {
-    // Update the position based on the x-speed
-    this.x += this.xSpeed;
-  }
-
-  isOutOfBounds() {
-    // Check if the pea is out of bounds (beyond the right edge of the canvas)
-    return this.x > canvas.width;
-  }
-}
-
-const plants = []; // Array to store planted plants
 
 function decreaseScore(qty) {
   score -= qty;
@@ -407,7 +277,7 @@ function restartGame() {
   // Remove existing zombies, suns, and plants
   zombies_arr.length = 0;
   suns_arr.length = 0;
-  plants.length = 0;
+ 
 
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -419,3 +289,4 @@ function restartGame() {
 restartButton.addEventListener("click", restartGame);
 
 restartGame();
+ /// collision detection
