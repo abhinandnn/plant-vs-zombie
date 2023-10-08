@@ -50,7 +50,7 @@ function updateGame() {
 updateGame();
 
 // zombies
-// Collision detection
+// Cordinates detection
 
 const getMouseCoordinates = (event) => {
   const rect = canvas.getBoundingClientRect();
@@ -76,14 +76,14 @@ class Zombie {
     this.width = 90;
     this.height = 90;
     this.speed = 0.5;
-    this.movement = this.speed;
-    this.curr_health = this.health;
+
+    
     this.image = new Image(this.width, this.height);
     this.image.src = "assets/img/zombie.png";
     console.log(`zombie created at y=${y}`);
     this.image.onload = () => {
       this.draw();
-    };
+    }
   }
 
   draw() {
@@ -145,11 +145,6 @@ document.getElementById("peashooter").addEventListener("click", () => {
   canPlant = true;
 });
 
-
-function decreaseScore(qty) {
-    score -=qty;
-  }
-
 // Handle planting logic
 canvas.addEventListener("mousedown", (event) => {
   if (!canPlant) return;
@@ -163,9 +158,9 @@ canvas.addEventListener("mousedown", (event) => {
     const boxX = Math.floor(x / square_size) * square_size + square_size / 2;
     const boxY = Math.floor(y / square_size) * square_size + square_size / 2;
 
-    // Check if the planting location is valid (e.g., not on the top control panel)
+    // Checking if the planting location is valid 
     if (boxY >= ctrl_pnl.h) {
-      // Check if there's already a plant of the same type at this location
+      // Checking if there's already a plant of the same type at this location
       const existingPlant = plants.find((plant) => {
         return (
           Math.abs(plant.x - boxX) < square_size / 2 &&
@@ -176,14 +171,14 @@ canvas.addEventListener("mousedown", (event) => {
 
       // If there's no existing plant of the same type, create and add the selected plant
       if (!existingPlant) {
-        if (selectedPlant === "sunflower"&&score >=50) {
+        if (selectedPlant === "sunflower" && score >= 50) {
           const sunflower = new Sunflower(boxX, boxY);
           plants.push(sunflower);
           decreaseScore(50);
-        } else if (selectedPlant === "peashooter"&& score>=100) {
-            const peashooter = new Peashooter(boxX, boxY);
-            decreaseScore(100);
-            plants.push(peashooter);
+        } else if (selectedPlant === "peashooter" && score >= -100) {
+          const peashooter = new Peashooter(boxX, boxY);
+          decreaseScore(100);
+          plants.push(peashooter);
         }
       }
 
@@ -282,7 +277,6 @@ class Sunflower {
       );
     }
   }
-
 }
 
 class Peashooter {
@@ -293,6 +287,10 @@ class Peashooter {
     this.planted = true; // Indicate that it's planted
     this.image = new Image();
     this.image.src = "assets/img/peashooter.png"; // Set the path to your peashooter image
+    this.peas = [];
+    this.peaSpeed = 2;
+    this.peaInterval = 2500; // Time interval between pea throws in milliseconds
+    this.lastPeaTime = Date.now();
   }
 
   draw() {
@@ -304,13 +302,62 @@ class Peashooter {
         this.radius * 2,
         this.radius * 2
       );
+      for (const pea of this.peas) {
+        pea.draw();
+      }
     }
   }
 
+  throwPea() {
+    const currentTime = Date.now();
+    if (currentTime - this.lastPeaTime >= this.peaInterval) {
+      const peaXSpeed = this.peaSpeed; // Speed in the x-direction
+      const peaY = this.y; // Fixed y-coordinate for peas
 
+      const pea = new Pea(this.x, peaY, this.radius, peaXSpeed);
+      this.peas.push(pea);
+      this.lastPeaTime = currentTime;
+    }
+  }
+}
+
+class Pea {
+  constructor(x, y, radius, xSpeed) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius / 4;
+    this.xSpeed = xSpeed;
+    this.image = new Image();
+    this.image.src = "assets/img/pea.png"; // Set the path to your pea image
+  }
+
+  draw() {
+    ctx.fillStyle = "green";
+    ctx.drawImage(
+      this.image,
+      this.x - this.radius + 22,
+      this.y - this.radius - 13,
+      this.radius * 2,
+      this.radius * 2
+    );
+  }
+
+  move() {
+    // Update the position based on the x-speed
+    this.x += this.xSpeed;
+  }
+
+  isOutOfBounds() {
+    // Check if the pea is out of bounds (beyond the right edge of the canvas)
+    return this.x > canvas.width;
+  }
 }
 
 const plants = []; // Array to store planted plants
+
+function decreaseScore(qty) {
+  score -= qty;
+}
 
 // Modify your game loop
 function gameLoop() {
@@ -324,6 +371,19 @@ function gameLoop() {
     sun.draw();
   }
   for (const plant of plants) {
+    if (plant instanceof Peashooter) {
+      plant.throwPea();
+      for (let i = plant.peas.length - 1; i >= 0; i--) {
+        const pea = plant.peas[i];
+        pea.move();
+        if (pea.isOutOfBounds()) {
+          // Remove the pea from the array when it's out of bounds
+          plant.peas.splice(i, 1);
+        } else {
+          pea.draw();
+        }
+      }
+    }
     plant.draw();
   }
   if (gameOver) {
@@ -344,10 +404,11 @@ function restartGame() {
   score = 50;
   gameOver = false;
 
-  // Remove existing zombies and suns
+  // Remove existing zombies, suns, and plants
   zombies_arr.length = 0;
   suns_arr.length = 0;
-  plants.length =0;
+  plants.length = 0;
+
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -357,6 +418,4 @@ function restartGame() {
 
 restartButton.addEventListener("click", restartGame);
 
-
 restartGame();
-
