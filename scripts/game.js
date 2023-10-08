@@ -313,8 +313,7 @@ function zombiese(){
     }
 }
 function collision(a,b){
-    return !(a.x>b.x+b.width||a.x+a.width<b.x||a.y>b.y+b.height||a.y+a.height<b.y);
-}
+    return !(a.x>b.x+b.width||a.x+a.width<b.x||a.y>b.y+b.height||a.y+a.height<b.y);}
 function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle='brown';
@@ -327,6 +326,5 @@ function updateGame(){
     zombiese();
     fr++;
     requestAnimationFrame(updateGame);
-
 }
 updateGame();
