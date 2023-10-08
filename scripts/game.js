@@ -12,6 +12,7 @@ const peas = [];
 const zombies=[];
 let fr=0;
 let zombietime=1200;
+let gameover=false;
 
 class Square {
     constructor(x, y, size) {
@@ -83,9 +84,8 @@ let plantCost=peashooterCost;
 const plants=[];
 const plantmenu=[
     {plantname:"peashooter",imgg:"/plants/peash.png"},
-    {plantname:"sunflower",imgg:"/plants/sunf.png"}
-    // {plantname:"sunflower",imgg:"/plants/sunf.png"},
-    // {plantname:"sunflower",imgg:"/plants/sunf.png"}
+    {plantname:"sunflower",imgg:"/plants/sunf.png"},
+    {plantname:"wallnut",imgg:"/plants/wall.png"}
 ]
 function drawPlantmenu(){
     let x=20;
@@ -154,12 +154,15 @@ class sunflower{
         this.health=75;
         this.cost=50;
         this.lastsun=0;
+        this.frame=0;
     }
     draw()
     {
-    const frameSpeed = 0.1;
-this.frame = Math.floor((Date.now() * frameSpeed) % 60);
-drawimg('SunFlower/5',60,this.x+2,this.y+8,this.frame)
+        if(fr%3===0)
+        {
+            this.frame=(this.frame+1)%13;
+        }
+drawimg('SunFlower/5',13,this.x+2,this.y+8,this.frame);
     }
     bringPease()
 {
@@ -196,11 +199,11 @@ class peashooter {
     }
 draw()
 {
-// ctx.fillStyle='green';
-// ctx.fillRect(this.x,this.y,this.side,this.side)
-const frameSpeed = 0.1;
-this.frame = Math.floor((Date.now() * frameSpeed) % 60);
-drawimg('Peashooter/4',60,this.x+2,this.y+8,this.frame)
+if(fr%4==0)
+{
+    this.frame=(this.frame+1)%12;
+}
+drawimg('Peashooter/4',12,this.x+2,this.y+8,this.frame);
 }
 bringPease()
 {
@@ -244,7 +247,6 @@ function managePlants(){
     for(let i=0;i<plants.length;i++)
     {
         plants[i].draw();
-        // if(plants[i].type==="peashooter")
         plants[i].bringPease();
     }
 }
@@ -356,6 +358,7 @@ function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle='brown';
     ctx.fillRect(0,0,ctrl_pnl.w,ctrl_pnl.h);
+    fr++;
     controlGame();
     drawPlantmenu();
     drawGrid();
@@ -364,7 +367,6 @@ function updateGame(){
     sune();
     sunese();
     zombiese();
-    fr++;
     requestAnimationFrame(updateGame);
 }
-updateGame();
+requestAnimationFrame(updateGame);
