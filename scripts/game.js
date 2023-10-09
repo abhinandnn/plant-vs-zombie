@@ -72,15 +72,16 @@ let selectedPlantType=undefined;
 let tsun=200;
 const suns=[];
 const rsuns=[];
-const sunflowerCost=75;
+const sunflowerCost=50;
 const peashooterCost=100;
 const chomperCost=100;
 const wallnutCost=50;
 let plantCost=peashooterCost;
 const plants=[];
+const zombiePos=[];
 const plantmenu=[
     {plantname:"peashooter",imgg:"/plants/peash.png",cost:"100"},
-    {plantname:"sunflower",imgg:"/plants/sunf.png",cost:" 75"},
+    {plantname:"sunflower",imgg:"/plants/sunf.png",cost:" 50"},
     {plantname:"wallnut",imgg:"/plants/wall.png",cost:" 50"}
 ]
 function drawPlantmenu(){
@@ -114,7 +115,7 @@ class sun{
         this.x=x;
         this.y=y;
         this.side=60;
-        this.power=10;
+        this.power=20;
         this.picked=false;
         this.lastPickedTime = 0;
         this.ry=60;
@@ -185,7 +186,7 @@ class wallnut{
         this.x=x;
         this.y=y;
         this.side=square_size;
-        this.health=500;
+        this.health=400;
         this.frame=0;
     }
 draw()
@@ -205,7 +206,7 @@ class peashooter {
         this.y=y;
         this.side=square_size;
         this.health=100;
-        this.enemyDetect=false;
+        this.zombiedetect=false;
         this.lastPea = 0;
         this.frame=0;
     }
@@ -219,13 +220,16 @@ drawimg('/plants/Peashooter/4',12,this.x+20,this.y+20,this.frame);
 }
 bringPease()
 {
+    if(this.zombiedetect)
+    {
     const currentTime=Date.now();
         if(currentTime-this.lastPea>=2000)
-        {
+        {  
             peas.push(new pea(this.x+38,this.y+22));
             this.lastPea=currentTime;
         }
     }
+}
 }
 canvas.addEventListener('click',function()
 {
@@ -261,6 +265,10 @@ function managePlants(){
         plants[i].draw();
         if(plants[i].type!="wallnut")
         plants[i].bringPease();
+    if(zombiePos.indexOf(plants[i].y)!==-1)
+    plants[i].zombiedetect=true;
+    else
+    plants[i].zombiedetect=false;
         for(let j=0;j<zombies.length;j++)
         {
             if( plants[i]&&collision(plants[i],zombies[j]))
@@ -284,7 +292,7 @@ class pea{
         this.x=x;
         this.y=y;
         this.side=30;
-        this.power=15;
+        this.power=20;
         this.speed=5;
     }
     move()
@@ -383,6 +391,8 @@ function zombiese(){
         }
         if(zombies[i].health<=0)
         {
+            const find=zombiePos.indexOf(zombies[i].y);
+            zombiePos.splice(find,1);
             zombies.splice(i,1);
             i--;
             score++;
@@ -392,7 +402,8 @@ function zombiese(){
     {
         let y=Math.floor(Math.random()*5+1)*square_size;
         zombies.push(new zombie(y));
-        if(zombietime > 500)
+        zombiePos.push(y);
+        if(zombietime > 400)
         {zombietime=zombietime-50;}
     }
 }
@@ -417,7 +428,7 @@ function controlGame()
 {
     ctx.fillStyle='black';
     ctx.font='bold 25px Arial';
-    ctx.fillText(tsun,60,93);
+    ctx.fillText(tsun,67,93);
     ctx.fillStyle='black';
     ctx.font='bold 25px Arial';
     ctx.fillText("ZOMBIES KILLED:"+score,700,60);
