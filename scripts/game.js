@@ -13,7 +13,7 @@ const zombies=[];
 let fr=0;
 let zombietime=1200;
 let gameover=false;
-
+let score=0;
 class Square {
     constructor(x, y, size) {
         this.x = x;
@@ -69,7 +69,7 @@ for(let i=0;i<l;i++)
     ctx.drawImage(images[frame],dx,dy);
 }
 let selectedPlantType=undefined;
-let tsun=1200;
+let tsun=200;
 const suns=[];
 const rsuns=[];
 const sunflowerCost=75;
@@ -385,6 +385,7 @@ function zombiese(){
         {
             zombies.splice(i,1);
             i--;
+            score++;
         }
     }
     if(fr%zombietime===0)
@@ -415,25 +416,27 @@ function sunese(){
 function controlGame()
 {
     ctx.fillStyle='black';
-    ctx.font='25px Arial';
+    ctx.font='bold 25px Arial';
     ctx.fillText(tsun,60,93);
+    ctx.fillStyle='black';
+    ctx.font='bold 25px Arial';
+    ctx.fillText("ZOMBIES KILLED:"+score,700,60);
     if(gameover){
         ctx.fillStyle='black'
         ctx.font='60px Arial';
         ctx.fillText('Game Over!', 300,330);
     }
 }
+const img1=new Image();
+    img1.src='/plants/control.png';
 function control()
 {
-    const img=new Image();
-        img.src='/plants/control.png';
-        ctx.drawImage(img,0,0,ctrl_pnl.w,ctrl_pnl.h);
+        ctx.drawImage(img1,0,0,ctrl_pnl.w,ctrl_pnl.h);
 }
 function collision(a,b){
     return !(a.x>b.x+b.side||a.x+a.side<b.x||a.y>b.y+b.side||a.y+a.side<b.y);}
 function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='brown';
     control();
     drawPlantmenu();
     drawGrid();
