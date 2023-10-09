@@ -4,9 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plant Vs Zombie</title>
+    <style>
+        body{
+            background-image: url("./assets/img/intro.jpg");
+            background-size:cover;
+            overflow: hidden;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            height:100vh;
+        }
+        #btn{
+            margin:auto;
+            width:150px;
+            height:80px;
+            background-color:rgb(36, 153, 36);
+            border-radius:20px;
+            color:white;
+           font-weight: 600;
+           font-size:large;
+        }
+        #btn:hover{
+            transform:scale(1.2);
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Plant Vs Zombie</h1>
+<button id="btn">PLAY GAME
+</button>   
+<script>
+    document.getElementById("btn").addEventListener("click",()=>{
+        window.location.href="/game1.html"
+    })
+</script> 
 </body>
-<a href="/game1.html"><button>click here!</button></a>
+
 </html>
