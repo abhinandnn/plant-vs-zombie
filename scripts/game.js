@@ -254,7 +254,7 @@ function managePlants(){
         plants[i].bringPease();
         for(let j=0;j<zombies.length;j++)
         {
-            if(collision(plants[i],zombies[j]))
+            if( plants[i]&&collision(plants[i],zombies[j]))
             {
                 zombies[j].motion=0;
                 zombies[j].attack=true;
@@ -294,6 +294,10 @@ for(let i=0;i<peas.length;i++)
 {
 peas[i].move();
 peas[i].draw();
+for(let j=0;j<zombies.length;j++)
+{
+    // if(zombies[j]&&projectile[i]&&)
+}
 if(peas[i]&&peas[i].x>canvas.width)
 {
 peas.splice(i,1);
@@ -338,8 +342,8 @@ draw(){
             this.frame=(this.frame+1)%21;
         }
 drawimg('/zombies/attack/1',21,this.x-90,this.y-40,this.frame);
-    ctx.strokeStyle = 'black';
-    ctx.strokeRect(this.x, this.y, this.side, this.side);
+    // ctx.strokeStyle = 'black';
+    // ctx.strokeRect(this.x, this.y, this.side, this.side);
     }
     else{
     if(fr%3===0)
@@ -347,8 +351,8 @@ drawimg('/zombies/attack/1',21,this.x-90,this.y-40,this.frame);
             this.frame=(this.frame+1)%21;
         }
 drawimg('/zombies/walk/1',21,this.x-90,this.y-40,this.frame);
-    ctx.strokeStyle = 'black';
-    ctx.strokeRect(this.x, this.y, this.side, this.side);
+    // ctx.strokeStyle = 'black';
+    // ctx.strokeRect(this.x, this.y, this.side, this.side);
     }}
 }
 
@@ -408,9 +412,9 @@ function updateGame(){
     drawGrid();
     managePlants();
     pease();
+    zombiese();
     sune();
     sunese();
-    zombiese();
     fr++;
     controlGame();
     if(!gameover)
