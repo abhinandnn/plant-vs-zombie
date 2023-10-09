@@ -72,16 +72,16 @@ let selectedPlantType=undefined;
 let tsun=1200;
 const suns=[];
 const rsuns=[];
-const sunflowerCost=50;
+const sunflowerCost=75;
 const peashooterCost=100;
 const chomperCost=100;
 const wallnutCost=50;
 let plantCost=peashooterCost;
 const plants=[];
 const plantmenu=[
-    {plantname:"peashooter",imgg:"/plants/peash.png",cost:100},
-    {plantname:"sunflower",imgg:"/plants/sunf.png",cost:75},
-    {plantname:"wallnut",imgg:"/plants/wall.png",cost:50}
+    {plantname:"peashooter",imgg:"/plants/peash.png",cost:"100"},
+    {plantname:"sunflower",imgg:"/plants/sunf.png",cost:" 75"},
+    {plantname:"wallnut",imgg:"/plants/wall.png",cost:" 50"}
 ]
 function drawPlantmenu(){
     let x=20;
@@ -148,7 +148,7 @@ this.ry=this.ry+this.speed;
 }}
 class sunflower{
     constructor(x,y){
-        this.type="sunflower"
+        this.type="sunflower";
         this.x=x;
         this.y=y;
         this.side=square_size;
@@ -164,8 +164,8 @@ class sunflower{
             this.frame=(this.frame+1)%13;
         }
 drawimg('/plants/SunFlower/5',13,this.x+20,this.y+18,this.frame);
-    ctx.strokeStyle = 'black';
-    ctx.strokeRect(this.x, this.y, this.side, this.side);
+    // ctx.strokeStyle = 'black';
+    // ctx.strokeRect(this.x, this.y, this.side, this.side);
 
     }
     bringPease()
@@ -185,10 +185,18 @@ class wallnut{
         this.x=x;
         this.y=y;
         this.side=square_size;
-        this.health=400;
+        this.health=500;
+        this.frame=0;
     }
 draw()
 {
+    if(fr%3===0)
+        {
+            this.frame=(this.frame+1)%12;
+        }
+drawimg('/plants/walll/6',12,this.x+25,this.y+20,this.frame);
+    // ctx.strokeStyle = 'black';
+    // ctx.strokeRect(this.x, this.y, this.side, this.side);
 }}
 class peashooter {
     constructor(x,y){
@@ -251,6 +259,7 @@ function managePlants(){
     for(let i=0;i<plants.length;i++)
     {
         plants[i].draw();
+        if(plants[i].type!="wallnut")
         plants[i].bringPease();
         for(let j=0;j<zombies.length;j++)
         {
@@ -261,10 +270,11 @@ function managePlants(){
                 plants[i].health=plants[i].health-0.2;
             }
             if(plants[i]&&plants[i].health<=0)
-            { plants.splice(i,1);
-            i--; 
-            zombies[j].attack=false;
-            zombies[j].motion=zombies[j].speed;}
+            { 
+                zombies[j].motion=zombies[j].speed;
+                zombies[j].attack=false;
+                plants.splice(i,1);
+            i--; }
         }
     }
 }
@@ -273,9 +283,8 @@ class pea{
     {
         this.x=x;
         this.y=y;
-        this.width=20;
-        this.height=20;
-        this.power=20;
+        this.side=30;
+        this.power=15;
         this.speed=5;
     }
     move()
@@ -285,7 +294,9 @@ class pea{
     draw(){
         const img=new Image();
         img.src='/plants/pea1.png';
-        ctx.drawImage(img,this.x,this.y);
+        ctx.drawImage(img,this.x,this.y,40,30);
+        // ctx.strokeStyle = 'black';
+        // ctx.strokeRect(this.x, this.y, this.side, this.side);
     }
 
 }
@@ -296,7 +307,12 @@ peas[i].move();
 peas[i].draw();
 for(let j=0;j<zombies.length;j++)
 {
-    // if(zombies[j]&&projectile[i]&&)
+    if(zombies[j]&&peas[i]&&collision(peas[i],zombies[j]))
+    {
+        zombies[j].health=zombies[j].health-peas[i].power;
+        peas.splice(i,1);
+        i--;
+    }
 }
 if(peas[i]&&peas[i].x>canvas.width)
 {
@@ -365,6 +381,11 @@ function zombiese(){
         {
             gameover=true;
         }
+        if(zombies[i].health<=0)
+        {
+            zombies.splice(i,1);
+            i--;
+        }
     }
     if(fr%zombietime===0)
     {
@@ -411,8 +432,8 @@ function updateGame(){
     drawPlantmenu();
     drawGrid();
     managePlants();
-    pease();
     zombiese();
+    pease();
     sune();
     sunese();
     fr++;
