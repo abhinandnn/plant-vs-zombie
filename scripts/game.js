@@ -84,7 +84,7 @@ const plantmenu=[
     {plantname:"wallnut",imgg:"/plants/wall.png",cost:" 50"}
 ]
 function drawPlantmenu(){
-    let x=20;
+    let x=180;
     for(let i=0;i<plantmenu.length;i++)
         {
         const img = new Image();
@@ -99,7 +99,7 @@ function drawPlantmenu(){
     canvas.addEventListener('click',function(event) {
         pointer.x=event.x-canvas.offsetLeft;
         pointer.y=event.y-canvas.offsetTop;
-        let x=20
+        let x=180
         for(let i=0;i<plantmenu.length;i++)
         {
         if(pointer.x>=x&&pointer.x<=x+100&&pointer.y>=20&&pointer.y<=80)
@@ -414,21 +414,27 @@ function sunese(){
 }
 function controlGame()
 {
-    ctx.fillStyle='yellow';
-    ctx.font='30px Arial';
-    ctx.fillText('Sun: '+tsun,canvas.width-230,60);
+    ctx.fillStyle='black';
+    ctx.font='25px Arial';
+    ctx.fillText(tsun,60,93);
     if(gameover){
         ctx.fillStyle='black'
         ctx.font='60px Arial';
         ctx.fillText('Game Over!', 300,330);
     }
 }
+function control()
+{
+    const img=new Image();
+        img.src='/plants/control.png';
+        ctx.drawImage(img,0,0,ctrl_pnl.w,ctrl_pnl.h);
+}
 function collision(a,b){
     return !(a.x>b.x+b.side||a.x+a.side<b.x||a.y>b.y+b.side||a.y+a.side<b.y);}
 function updateGame(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle='brown';
-    ctx.fillRect(0,0,ctrl_pnl.w,ctrl_pnl.h);
+    control();
     drawPlantmenu();
     drawGrid();
     managePlants();
