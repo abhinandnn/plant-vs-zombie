@@ -10,6 +10,7 @@ const pointer ={
 };
 const peas = [];
 const zombies=[];
+const zomb=[];
 let fr=0;
 let zombietime=1200;
 let gameover=false;
@@ -276,13 +277,19 @@ function managePlants(){
         {
             if( plants[i]&&collision(plants[i],zombies[j]))
             {
+                zomb.push(j);
                 // zombies[j].motion=0;
                 zombies[j].attack=true;
                 plants[i].health=plants[i].health-0.2;
             }
             if(plants[i]&&plants[i].health<=0)
-            {                 
-                zombies[j].attack=false;
+            { 
+                // zombies[j].motion=zombies[j].speed;
+                for(let k=0;k<zomb.length;k++)
+                {
+                    zombies[zomb[k]].attack=false;
+                }
+                // zombies[j].attack=false;
                 plants.splice(i,1);
             i--; }
         }
@@ -397,6 +404,12 @@ function zombiese(){
             const find=zombiePos.indexOf(zombies[i].y);
             zombiePos.splice(find,1);
             zombies.splice(i,1);
+            for(let k=0;k<zomb.length;k++)
+            {
+                if(zomb[k]===i)
+                { zomb.splice(k,1);
+                k--;}
+            }
             i--;
             score++;
         }
