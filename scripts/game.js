@@ -199,7 +199,7 @@ class wallnut {
     this.x = x;
     this.y = y;
     this.side = square_size;
-    this.health = 100; 
+    this.health = 100;   //reduced the health of wallnut
     this.frame = 0;
   }
   draw() {
