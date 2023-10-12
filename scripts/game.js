@@ -14,6 +14,9 @@ let fr=0;
 let zombietime=1200;
 let gameover=false;
 let score=0;
+// class images{
+//     constructor()
+// }
 class Square {
     constructor(x, y, size) {
         this.x = x;
@@ -152,7 +155,7 @@ class sunflower{
         this.type="sunflower";
         this.x=x;
         this.y=y;
-        this.side=square_size;
+        this.side=square_size-4;
         this.health=75;
         this.cost=50;
         this.lastsun=0;
@@ -185,7 +188,7 @@ class wallnut{
         this.type="wallnut";
         this.x=x;
         this.y=y;
-        this.side=square_size;
+        this.side=square_size-4;
         this.health=400;
         this.frame=0;
     }
@@ -204,7 +207,7 @@ class peashooter {
         this.type="peashooter";
         this.x=x;
         this.y=y;
-        this.side=square_size;
+        this.side=square_size-4;
         this.health=100;
         this.zombiedetect=false;
         this.lastPea = 0;
@@ -273,13 +276,12 @@ function managePlants(){
         {
             if( plants[i]&&collision(plants[i],zombies[j]))
             {
-                zombies[j].motion=0;
+                // zombies[j].motion=0;
                 zombies[j].attack=true;
                 plants[i].health=plants[i].health-0.2;
             }
             if(plants[i]&&plants[i].health<=0)
-            { 
-                zombies[j].motion=zombies[j].speed;
+            {                 
                 zombies[j].attack=false;
                 plants.splice(i,1);
             i--; }
@@ -291,7 +293,7 @@ class pea{
     {
         this.x=x;
         this.y=y;
-        this.side=30;
+        this.side=26;
         this.power=20;
         this.speed=5;
     }
@@ -348,7 +350,7 @@ class zombie{
     {
         this.x=canvas.width;
         this.y=y;
-        this.side=square_size;
+        this.side=square_size-4;
         this.speed=Math.random()*0.3+0.3;
         this.motion=this.speed;
         this.health=100;
@@ -356,6 +358,7 @@ class zombie{
         this.attack=false;
     }
 move(){
+    if(!this.attack)
     this.x=this.x-this.motion;
 }
 draw(){
@@ -400,11 +403,13 @@ function zombiese(){
     }
     if(fr%zombietime===0)
     {
-        let y=Math.floor(Math.random()*5+1)*square_size;
+        let y=Math.floor(Math.random()*5+1)*(square_size);
         zombies.push(new zombie(y));
         zombiePos.push(y);
-        if(zombietime > 400)
+        if(zombietime >=100)
         {zombietime=zombietime-50;}
+        if(zombietime <=50&&zombietime>=20)
+        zombietime=zombietime-5;
     }
 }
 function sunese(){
