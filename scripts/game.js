@@ -61,17 +61,22 @@ canvas.addEventListener('mouseleave',function(event) {
     pointer.y=0;
 })
 let i=0;
-function drawimg(x,l,dx,dy,frame)
+let images=[5];
+function drawimg(x,l,k)
 {
-let images=[];
 images.length=l;
+images[k]=[];
 for(let i=0;i<l;i++)
 {
-    images[i]=new Image();
-    images[i].src= x +' (' + (i+1).toString()+').png';
+    images[k][i]=new Image();
+    images[k][i].src= x +' (' + (i+1).toString()+').png';
 }
-    ctx.drawImage(images[frame],dx,dy);
 }
+drawimg('/zombies/attack/1',21,0);
+drawimg('/zombies/walk/1',21,1);
+drawimg('/plants/SunFlower/5',13,2);
+drawimg('/plants/walll/6',12,3);
+drawimg('/plants/Peashooter/4',12,4);
 let selectedPlantType=undefined;
 let tsun=200;
 const suns=[];
@@ -168,9 +173,7 @@ class sunflower{
         {
             this.frame=(this.frame+1)%13;
         }
-drawimg('/plants/SunFlower/5',13,this.x+20,this.y+18,this.frame);
-    // ctx.strokeStyle = 'black';
-    // ctx.strokeRect(this.x, this.y, this.side, this.side);
+        ctx.drawImage(images[2][this.frame],this.x+20,this.y+18);
 
     }
     bringPease()
@@ -199,9 +202,7 @@ draw()
         {
             this.frame=(this.frame+1)%12;
         }
-drawimg('/plants/walll/6',12,this.x+25,this.y+20,this.frame);
-    // ctx.strokeStyle = 'black';
-    // ctx.strokeRect(this.x, this.y, this.side, this.side);
+        ctx.drawImage(images[3][this.frame],this.x+25,this.y+20);
 }}
 class peashooter {
     constructor(x,y){
@@ -220,7 +221,7 @@ if(fr%3==0)
 {
     this.frame=(this.frame+1)%12;
 }
-drawimg('/plants/Peashooter/4',12,this.x+20,this.y+20,this.frame);
+ctx.drawImage(images[4][this.frame],this.x+20,this.y+20);
 }
 bringPease()
 {
@@ -278,18 +279,15 @@ function managePlants(){
             if( plants[i]&&collision(plants[i],zombies[j]))
             {
                 zomb.push(j);
-                // zombies[j].motion=0;
                 zombies[j].attack=true;
                 plants[i].health=plants[i].health-0.2;
             }
             if(plants[i]&&plants[i].health<=0)
             { 
-                // zombies[j].motion=zombies[j].speed;
                 for(let k=0;k<zomb.length;k++)
                 {
                     zombies[zomb[k]].attack=false;
                 }
-                // zombies[j].attack=false;
                 plants.splice(i,1);
             i--; }
         }
@@ -311,9 +309,7 @@ class pea{
     draw(){
         const img=new Image();
         img.src='/plants/pea1.png';
-        ctx.drawImage(img,this.x,this.y,40,30);
-        // ctx.strokeStyle = 'black';
-        // ctx.strokeRect(this.x, this.y, this.side, this.side);
+        ctx.drawImage(img,this.x,this.y);
     }
 
 }
@@ -375,7 +371,7 @@ draw(){
         {
             this.frame=(this.frame+1)%21;
         }
-drawimg('/zombies/attack/1',21,this.x-90,this.y-40,this.frame);
+        ctx.drawImage(images[0][this.frame],this.x-90,this.y-40);
     // ctx.strokeStyle = 'black';
     // ctx.strokeRect(this.x, this.y, this.side, this.side);
     }
@@ -384,7 +380,7 @@ drawimg('/zombies/attack/1',21,this.x-90,this.y-40,this.frame);
         {
             this.frame=(this.frame+1)%21;
         }
-drawimg('/zombies/walk/1',21,this.x-90,this.y-40,this.frame);
+        ctx.drawImage(images[1][this.frame],this.x-90,this.y-40);
     // ctx.strokeStyle = 'black';
     // ctx.strokeRect(this.x, this.y, this.side, this.side);
     }}
@@ -421,7 +417,7 @@ function zombiese(){
         zombiePos.push(y);
         if(zombietime >=100)
         {zombietime=zombietime-50;}
-        if(zombietime <=50&&zombietime>=20)
+        if(zombietime <=50&&zombietime>=40)
         zombietime=zombietime-5;
     }
 }
