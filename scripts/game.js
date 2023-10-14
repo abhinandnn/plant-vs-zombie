@@ -15,9 +15,27 @@ let fr=0;
 let zombietime=1200;
 let gameover=false;
 let score=0;
+let theme = new Audio();
+let plantation = new Audio();
+let seed = new Audio();
+let peahit = new Audio();
+let lost = new Audio();
+let pnt = new Audio();
+seed.src = "assets/audio/seed.mp3";
+plantation.src = "assets/audio/plant.mp3";
+peahit.src = "assets/audio/pea.mp3";
+theme.src = "assets/audio/theme.mp3";
+lost.src = "assets/audio/losemusic.mp3";
+pnt.src = "assets/audio/points.mp3";
+function audi(aud)
+{
+    aud.currentTime=0;
+    aud.play();
+}
 // class images{
 //     constructor()
-// }
+// }    
+audi(theme);
 class Square {
     constructor(x, y, size) {
         this.x = x;
@@ -93,13 +111,17 @@ const plantmenu=[
     {plantname:"sunflower",imgg:"/plants/sunf.png",cost:" 50"},
     {plantname:"wallnut",imgg:"/plants/wall.png",cost:" 50"}
 ]
+const imgk=[];
+for(let i=0;i<plantmenu.length;i++)
+        {
+        imgk[i] = new Image();
+        imgk[i].src = plantmenu[i].imgg;
+        }
 function drawPlantmenu(){
     let x=180;
     for(let i=0;i<plantmenu.length;i++)
         {
-        const img = new Image();
-        img.src = plantmenu[i].imgg;
-        ctx.drawImage(img, x, 20, 100, 60);
+        ctx.drawImage(imgk[i], x, 20, 100, 60);
         ctx.fillStyle='yellow';
         ctx.font='18px Arial';
         ctx.fillText(plantmenu[i].cost,x+60,60);
@@ -114,6 +136,7 @@ function drawPlantmenu(){
         {
         if(pointer.x>=x&&pointer.x<=x+100&&pointer.y>=20&&pointer.y<=80)
         {selectedPlantType=plantmenu[i].plantname;
+            audi(seed);
         }
         x=x+120;
         }
@@ -144,6 +167,7 @@ class sun{
 pick()
 {
     this.picked=true;
+    audi(pnt);
 }
 randomdraw()
     {
@@ -178,12 +202,10 @@ class sunflower{
     }
     bringPease()
 {
-    const currentTime=Date.now();
-        if(currentTime-this.lastsun>=10000)
+        if(fr%1000==0)
         {
             suns.push(new sun(this.x+38,this.y+20));
             suns[suns.length - 1].lastPickedTime = Date.now();
-            this.lastsun=currentTime;
         }
     }
 } 
@@ -228,7 +250,7 @@ bringPease()
     if(this.zombiedetect)
     {
     const currentTime=Date.now();
-        if(currentTime-this.lastPea>=2000)
+        if(currentTime-this.lastPea>=2500)
         {  
             peas.push(new pea(this.x+38,this.y+22));
             this.lastPea=currentTime;
@@ -262,6 +284,7 @@ canvas.addEventListener('click',function()
     
     if(tsun>=plantCost)
     {plants.push(new selectedPlant(sqrX,sqrY));
+        audi(plantation);
     tsun=tsun-plantCost;}
 })
 function managePlants(){
@@ -323,6 +346,7 @@ for(let j=0;j<zombies.length;j++)
     if(zombies[j]&&peas[i]&&collision(peas[i],zombies[j]))
     {
         zombies[j].health=zombies[j].health-peas[i].power;
+        audi(peahit);
         peas.splice(i,1);
         i--;
     }
@@ -391,9 +415,10 @@ function zombiese(){
     {
         zombies[i].move();
         zombies[i].draw();
-        if(zombies[i].x<0)
+        if(zombies[i].x<-5)
         {
             gameover=true;
+            audi(lost);
         }
         if(zombies[i].health<=0)
         {
@@ -415,10 +440,10 @@ function zombiese(){
         let y=Math.floor(Math.random()*5+1)*(square_size);
         zombies.push(new zombie(y));
         zombiePos.push(y);
-        if(zombietime >=100)
+        if(zombietime >=250)
         {zombietime=zombietime-50;}
-        if(zombietime <=50&&zombietime>=40)
-        zombietime=zombietime-5;
+        if(zombietime <=200&&zombietime>=50)
+        zombietime=zombietime-10;
     }
 }
 function sunese(){
@@ -449,7 +474,14 @@ function controlGame()
     if(gameover){
         ctx.fillStyle='black'
         ctx.font='60px Arial';
-        ctx.fillText('Game Over!', 300,330);
+        ctx.fillText('Game Over!', 310,330);
+    }
+    else if(score>=100)
+    {
+        ctx.fillStyle='black'
+        ctx.font='60px Arial';
+        ctx.fillText('You won!', 340,330);
+        gameover=true;
     }
 }
 const img1=new Image();
@@ -470,8 +502,10 @@ function updateGame(){
     pease();
     sune();
     sunese();
-    fr++;
     controlGame();
+    fr++;
+    if(gameover)
+    theme.pause();
     if(!gameover)
     requestAnimationFrame(updateGame);
 }
