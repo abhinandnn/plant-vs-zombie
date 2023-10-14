@@ -202,10 +202,12 @@ class sunflower{
     }
     bringPease()
 {
-        if(fr%1100==0)
+        const currentTime=Date.now();
+        if(currentTime-this.lastsun>=17000)
         {
             suns.push(new sun(this.x+38,this.y+20));
             suns[suns.length - 1].lastPickedTime = Date.now();
+            this.lastsun=currentTime;
         }
     }
 } 
@@ -458,7 +460,7 @@ function sunese(){
             i--;
         }
     }
-    if(fr%500===0)
+    if(fr%600===0)
     {
         rsuns.push(new sun(undefined,undefined));
     }
