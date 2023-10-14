@@ -316,6 +316,8 @@ function managePlants(){
         }
     }
 }
+const imgp=new Image();
+imgp.src='/plants/pea1.png';
 class pea{
     constructor(x,y)
     {
@@ -330,9 +332,7 @@ class pea{
         this.x=this.x+this.speed;
     }
     draw(){
-        const img=new Image();
-        img.src='/plants/pea1.png';
-        ctx.drawImage(img,this.x,this.y);
+        ctx.drawImage(imgp,this.x,this.y);
     }
 
 }
