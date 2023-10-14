@@ -202,7 +202,7 @@ class sunflower{
     }
     bringPease()
 {
-        if(fr%1000==0)
+        if(fr%1100==0)
         {
             suns.push(new sun(this.x+38,this.y+20));
             suns[suns.length - 1].lastPickedTime = Date.now();
